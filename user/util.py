@@ -6,4 +6,4 @@ def Response(code, data, message):
         "code": code,
         "data": data,
         "message": message
-    })
+    }, ensure_ascii=False)
