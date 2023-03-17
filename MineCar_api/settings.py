@@ -24,7 +24,7 @@ SECRET_KEY = "django-insecure-#yd8z&s@r-q+^t)-ct7%rl#6m#6_rae75*@l^=x#xr2e0eosg@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['skyemperor.top', 'localhost', '127.0.0.1']
+# ALLOWED_HOSTS = ['skyemperor.top', 'localhost', '127.0.0.1']
 
 # Application definition
 
@@ -56,7 +56,7 @@ CORS_ALLOW_CREDENTIALS = True #解决跨域
 CORS_ORIGIN_ALLOW_ALL = True #解决跨域
 # 允许任何表头
 CORS_ALLOW_HEADERS = ("*")  # 解决跨域
-
+ALLOWED_HOSTS = ['*']
 
 # 设置白名单
 CORS_ORIGIN_WHITELIST = [

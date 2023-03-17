@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="ab7ac6e5-0fa8-4ad0-8083-10465646aeba" name="minecAR" url="http://152.136.123.49">
+        <fileTransfer accessType="SFTP" host="152.136.123.49" port="22" sshConfigId="a59ec25d-b790-406a-bf44-6dd8b5305518" sshConfig="ubuntu@152.136.123.49:22 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
