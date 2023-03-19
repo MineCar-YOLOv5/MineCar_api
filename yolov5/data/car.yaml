@@ -1,0 +1,4 @@
+train: E:/pythonProject/paper_data/dataSet_path/train.txt
+val: E:/pythonProject/paper_data/dataSet_path/val.txt
+nc: 5
+names: ["Error_T","Minecart_Coal","Minecart_Empty","Minecart_T","Tool_Vehicle"]
