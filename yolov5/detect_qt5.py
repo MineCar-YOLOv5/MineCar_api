@@ -17,9 +17,9 @@ from yolov5.utils.torch_utils import select_device, load_classifier, time_synchr
 def my_lodelmodel():
     parser = argparse.ArgumentParser()
     parser.add_argument('--device', default='', help='cuda device, i.e. 0 or 0,1,2,3 or cpu')
-    parser.add_argument('--weights', nargs='+', type=str, default='runs/train/exp8/weights/best.pt',
+    parser.add_argument('--weights', nargs='+', type=str, default='yolov5/runs/train/exp8/weights/best.pt',
                         help='model.pt path(s)')
-    opt = parser.parse_args()
+    opt = parser.parse_args(args=[])
     device = select_device(opt.device)
 
     '''
@@ -132,13 +132,47 @@ def detect(opt, my_model, source_open):
                         c = int(cls)  # integer class
                         label = None if opt.hide_labels else (names[c] if opt.hide_conf else f'{names[c]} {conf:.2f}')
                         plot_one_box(xyxy, im0, label=label, color=colors(c, True), line_thickness=opt.line_thickness)
+            #             if opt.save_crop:
+            #                 save_one_box(xyxy, imc, file=save_dir / 'crops' / names[c] / f'{p.stem}.jpg', BGR=True)
+            #
+            # # Print time (inference + NMS)
+            # print(f'{s}Done. ({t2 - t1:.3f}s)')
+
+            # Stream results
+            # if view_img:
+            #     cv2.imshow(str(p), im0)
+            #     cv2.waitKey(1)  # 1 millisecond
+
+            # Save results (image with detections)
+            # if save_img:
+            #     if dataset.mode == 'image':
+            #         cv2.imwrite(save_path, im0)
+            #     else:  # 'video' or 'stream'
+            #         if vid_path != save_path:  # new video
+            #             vid_path = save_path
+            #             if isinstance(vid_writer, cv2.VideoWriter):
+            #                 vid_writer.release()  # release previous video writer
+            #             if vid_cap:  # video
+            #                 fps = vid_cap.get(cv2.CAP_PROP_FPS)
+            #                 w = int(vid_cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+            #                 h = int(vid_cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+            #             else:  # stream
+            #                 fps, w, h = 30, im0.shape[1], im0.shape[0]
+            #                 save_path += '.mp4'
+            #             vid_writer = cv2.VideoWriter(save_path, cv2.VideoWriter_fourcc(*'mp4v'), fps, (w, h))
+            #         vid_writer.write(im0)
+
+    # if save_txt or save_img:
+    #     s = f"\n{len(list(save_dir.glob('labels/*.txt')))} labels saved to {save_dir / 'labels'}" if save_txt else ''
+    #     print(f"Results saved to {save_dir}{s}")
 
     print(f'Done. ({time.time() - t0:.3f}s)')
     return im0,label
 def main_detect(my_model,source_open):
 # if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--weights', nargs='+', type=str, default='runs/train/exp8/weights/best.pt', help='model.pt path(s)')
+    parser.add_argument('--weights', nargs='+', type=str, default='yolov5/runs/train/exp8/weights/best.pt', help='model.pt path(s)')
+
     parser.add_argument('--source', type=str, default='data/images', help='source')  # file/folder, 0 for webcam
     parser.add_argument('--img-size', type=int, default=640, help='inference size (pixels)')
     parser.add_argument('--conf-thres', type=float, default=0.25, help='object confidence threshold')
@@ -161,10 +195,12 @@ def main_detect(my_model,source_open):
     parser.add_argument('--hide-labels', default=False, action='store_true', help='hide labels')
     parser.add_argument('--hide-conf', default=False, action='store_true', help='hide confidences')
     parser.add_argument('--half', action='store_true', help='use FP16 half-precision inference')
-    opt = parser.parse_args()
-    print(opt)
+    opt = parser.parse_args(args=[])
+    # print(000000, opt)
 
 
-    im0, label = detect(my_model, source_open)
+    im0, label = detect(opt, my_model, source_open)
+    # print(1111, im0)
+    # print(2222, label)
     print("detect")
     return im0, label

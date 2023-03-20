@@ -27,16 +27,23 @@ def Regist(request):
         print(name, password)
         # result = User.objects.create(name=name, password=password)
 
-
-from yolov5.detect import main_detect, my_lodelmodel
+from yolov5.detect_qt5 import my_lodelmodel,main_detect
 import cv2
-
+import base64
 def imagePredict(request):
-    if request.method == "POST":
-        fileData = request.FILES.get("image")
-        print(fileData)
-        im0, label = main_detect(my_lodelmodel, fileData)
-        # QApplication.processEvents()
+    if request.method == "GET":
+        fileData = request.GET.get("image")
+        print(33333, fileData)
+        # with open("yolov5/data/images/index.jpg", 'wb+') as f:
+        #     # 分块写入文件
+        #     for chunk in fileData.chunks():
+        #         f.write(chunk)
+        # bytes = read_into_buffer("yolov5/data/images/index.jpg")
+        # print(1111, type(bytes))
+        # im0,label = main_detect(my_lodelmodel(), "yolov5/data/images/index.jpg")
+        im0, label = main_detect(my_lodelmodel(), fileData)
+        print(im0, label)
+
         width = im0.shape[1]
         height = im0.shape[0]
 
@@ -52,9 +59,20 @@ def imagePredict(request):
 
             show = cv2.resize(im0, (int(width * height_new / height), height_new))
         im0 = cv2.cvtColor(show, cv2.COLOR_RGB2BGR)
-        print(im0)
-        # image_name = QtGui.QImage(im0, im0.shape[1], im0.shape[0], 3 * im0.shape[1], QtGui.QImage.Format_RGB888)
-        # label=label.split(' ')[0]    #label 59 0.96   分割字符串  取前一个
-        # self.label2.setPixmap(QtGui.QPixmap.fromImage(image_name))
-        # jpg = QtGui.QPixmap(image_name).scaled(self.label1.width(), self.label1.height())
-        # self.label2.setPixmap(jpg)
+        from PIL import Image
+        im = Image.fromarray(im0)
+        im.save("index.jpg")
+        with open("index.jpg", 'rb') as f:
+            img_data = f.read()
+        base64_data = base64.b64encode(img_data)
+        base64_str = base64_data.decode('utf-8')
+        return HttpResponse(Response(code=200, data=base64_str, message=label))
+
+    return None
+import os
+def read_into_buffer(filename):
+    buf = bytearray(os.path.getsize(filename))
+    with open(filename, 'rb') as f:
+        f.readinto(buf)
+    f.close()
+    return buf
