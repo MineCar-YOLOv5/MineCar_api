@@ -1,9 +1,7 @@
 asgiref==3.6.0
-certifi @ file:///C:/b/abs_85o_6fm0se/croot/certifi_1671487778835/work/certifi
 Django==4.1.7
 django-cors-headers==3.14.0
 mysqlclient==2.1.1
 PyMySQL==1.0.2
-sqlparse @ file:///C:/b/abs_83jn6owfpc/croot/sqlparse_1668793499314/work
 tzdata==2022.7
 wincertstore==0.2
