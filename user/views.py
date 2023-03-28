@@ -70,3 +70,35 @@ def imagePredict(request):
         finally:
             os.remove(filePath)
     return None
+
+
+import cv2
+
+
+
+def video_demo(request):
+    if request.method == "GET":
+        cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+        while (cap.isOpened()):
+            retval, frame = cap.read()
+            cv2.imshow('Live', frame)
+            filePath = f"yolov5/data/index.jpg"
+            cv2.imwrite(filePath, frame)
+            try:
+                im0, label = main_detect(my_lodelmodel(), filePath)
+                width = im0.shape[1]
+                height = im0.shape[0]
+                show = cv2.resize(im0, (width, height))
+                im0 = cv2.cvtColor(show, cv2.COLOR_RGB2BGR)
+                image = Image.fromarray(im0)
+                img_buffer = BytesIO()
+                image.save(img_buffer, format='JPEG')
+                byte_data = img_buffer.getvalue()
+                base64_data = base64.b64encode(byte_data)
+                base64_str = base64_data.decode('utf-8')
+                return HttpResponse(Response(code=200, data=base64_str, message=label))
+            except:
+                return HttpResponse(Response(code=200, data=None, message="图片检测错误"))
+            finally:
+                os.remove(filePath)
+        return None
