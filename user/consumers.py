@@ -1,4 +1,5 @@
 import json
+import time
 
 import cv2
 from yolov5.detect_qt5 import my_lodelmodel, main_detect
@@ -44,46 +45,53 @@ class SyncConsumer(WebsocketConsumer):
 
     # 从WebSocket中接收消息
     def receive(self, text_data=None, bytes_data=None):
-        print('WebSocket接收消息：', text_data, type(text_data))
         text_data_json = json.loads(text_data)
         message = text_data_json['message']
-        # 发送消息到通道
-        async_to_sync(self.channel_layer.group_send)(
-            self.channel_group_name,
-            {
-                'type': 'get_message',
-                'message': message
-            }
-        )
+        # while True:
+        #     print('WebSocket接收消息：', text_data, type(text_data))
+        #     text_data_json = json.loads(text_data)
+        #     message = text_data_json['message']
+        #     time.sleep(1)
+        #     print(message)
+        print(message)
+        if message == "close":
+            self.disconnect(self.channel_group_name)
+        else:
+            async_to_sync(self.channel_layer.group_send)(
+                self.channel_group_name,
+                {
+                    'type': 'get_message',
+                    'message': message
+                }
+            )
 
     def get_message(self, event):
+        # print(event.get("message"))
         cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
-        if event.get('message'):
-            message = event['message']
-            # 判断消息
-            if message == "close":
-                # 关闭websocket连接
-                self.disconnect(self.channel_group_name)
-                print("前端关闭websocket连接")
-        else:
-            while (cap.isOpened()):
-                retval, frame = cap.read()
-                filePath = f"yolov5/data/index.jpg"
-                cv2.imwrite(filePath, frame)
-                try:
-                    im0, label = main_detect(my_lodelmodel(), filePath)
-                    width = im0.shape[1]
-                    height = im0.shape[0]
-                    show = cv2.resize(im0, (width, height))
-                    im0 = cv2.cvtColor(show, cv2.COLOR_RGB2BGR)
-                    image = Image.fromarray(im0)
-                    img_buffer = BytesIO()
-                    image.save(img_buffer, format='JPEG')
-                    byte_data = img_buffer.getvalue()
-                    base64_data = base64.b64encode(byte_data)
-                    base64_str = base64_data.decode('utf-8')
-                    self.send(text_data=base64_str)
-                except:
-                    self.send(text_data="视频检测失败")
-                finally:
-                    os.remove(filePath)
+        while (cap.isOpened()):
+            retval, frame = cap.read()
+            filePath = f"yolov5/data/index.jpg"
+            cv2.imwrite(filePath, frame)
+            try:
+                im0, label = main_detect(my_lodelmodel(), filePath)
+                width = im0.shape[1]
+                height = im0.shape[0]
+                show = cv2.resize(im0, (width, height))
+                im0 = cv2.cvtColor(show, cv2.COLOR_RGB2BGR)
+                image = Image.fromarray(im0)
+                img_buffer = BytesIO()
+                image.save(img_buffer, format='JPEG')
+                byte_data = img_buffer.getvalue()
+                base64_data = base64.b64encode(byte_data)
+                base64_str = base64_data.decode('utf-8')
+                self.send(text_data=base64_str)
+                time.sleep(0.001)
+                if event.get('message'):
+                    message = event['message']
+                    if message == 'close':
+                        break
+            except:
+                self.send(text_data="视频检测失败")
+            finally:
+                os.remove(filePath)
+
