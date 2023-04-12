@@ -49,14 +49,6 @@ def imagePredict(request):
             width = im0.shape[1]
             height = im0.shape[0]
             show = cv2.resize(im0, (width, height))
-            # # 设置新的图片分辨率框架
-            # width_new = 700
-            # height_new = 500
-            # # 判断图片的长宽比率
-            # if width / height >= width_new / height_new:
-            #     show = cv2.resize(im0, (width_new, int(height * width_new / width)))
-            # else:
-            #     show = cv2.resize(im0, (int(width * height_new / height), height_new))
             im0 = cv2.cvtColor(show, cv2.COLOR_RGB2BGR)
             image = Image.fromarray(im0)
             img_buffer = BytesIO()
